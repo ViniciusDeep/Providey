@@ -8,8 +8,18 @@
 
 import Foundation
 
-struct Providey<T: Decodable > {
+struct Providey<T: Decodable> {
     
+    func request(router: ProvideyRouter, withMethod method: ProvideyMethod, params: [String : Any]?, completion: @escaping (Result<T, Error>) -> () ) {
+        ProvideyMethod.request(router: router, withMethod: method, params: params) { (result) in
+            switch result {
+            case .failure(let error):
+                completion(.failure(error))
+            case .success(_):
+                break
+            }
+        }
+    }
 }
 
 enum ProvideyMethod: String {
@@ -20,13 +30,28 @@ enum ProvideyMethod: String {
 }
 
 extension ProvideyMethod {
-    func request(router: ProvideyRouter,withMethod method: ProvideyMethod, completion: @escaping (Result<Data, Error>) -> ()) {
+    static func request(router: ProvideyRouter,withMethod method: ProvideyMethod,params: [String: Any]?, completion: @escaping (Result<Data, Error>)-> ()) {
+        guard let url = URL(string: router.rawValue) else {return}
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = method.rawValue
         
-        
-        
+        do {
+            let data = try JSONSerialization.data(withJSONObject: params ?? "", options: .init())
+            
+        urlRequest.httpBody = data
+        urlRequest.setValue("application/json", forHTTPHeaderField: "content-type")
+            
+           URLSession.shared.dataTask(with: urlRequest) { (data, _, err) in
+                if let error = err { completion(.failure(error))}
+                guard let data = data else {return print("Does not load data")}
+                completion(.success(data))
+            }.resume()
+        } catch {
+            completion(.failure(error))
+        }
     }
 }
 
-enum ProvideyRouter {
-    
+enum ProvideyRouter: String {
+    case home = "www.google.com/home" // Something to test
 }
