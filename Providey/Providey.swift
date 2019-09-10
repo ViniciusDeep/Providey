@@ -9,14 +9,18 @@
 import Foundation
 
 struct Providey<T: Decodable> {
-    
     func request(router: ProvideyRouter, withMethod method: ProvideyMethod, params: [String : Any]?, completion: @escaping (Result<T, Error>) -> () ) {
         ProvideyMethod.request(router: router, withMethod: method, params: params) { (result) in
             switch result {
             case .failure(let error):
                 completion(.failure(error))
-            case .success(_):
-                break
+            case .success(let data):
+                do {
+                    let refund = try JSONDecoder().decode(T.self, from: data)
+                    DispatchQueue.main.async {completion(.success(refund))}
+                } catch {
+                    DispatchQueue.main.async {completion(.failure(error))}
+                }
             }
         }
     }
