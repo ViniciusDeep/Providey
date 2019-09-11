@@ -10,7 +10,7 @@ import Foundation
 
 struct Providey<T: Decodable> {
     func request(router: ProvideyRouter, withMethod method: ProvideyMethod, params: [String : Any]?, completion: @escaping (Result<T, Error>) -> () ) {
-        ProvideyMethod.request(router: router, withMethod: method, params: params) { (result) in
+        method.request(router: router, params: params) { (result) in
             switch result {
             case .failure(let error):
                 completion(.failure(error))
@@ -34,10 +34,10 @@ enum ProvideyMethod: String {
 }
 
 extension ProvideyMethod {
-    static func request(router: ProvideyRouter,withMethod method: ProvideyMethod,params: [String: Any]?, completion: @escaping (Result<Data, Error>)-> ()) {
+    func request(router: ProvideyRouter, params: [String: Any]?, completion: @escaping (Result<Data, Error>)-> ()) {
         guard let url = URL(string: router.rawValue) else {return}
         var urlRequest = URLRequest(url: url)
-        urlRequest.httpMethod = method.rawValue
+        urlRequest.httpMethod = rawValue
         
         do {
             let data = try JSONSerialization.data(withJSONObject: params ?? "", options: .init())
