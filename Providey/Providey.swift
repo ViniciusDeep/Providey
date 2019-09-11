@@ -9,7 +9,7 @@
 import Foundation
 
 struct Providey<T: Decodable> {
-    func request(router: ProvideyRouter, withMethod method: ProvideyMethod, params: [String : Any]?, completion: @escaping (Result<T, Error>) -> () ) {
+    func request(router: ProvideyEndpoint, withMethod method: ProvideyMethod, params: [String : Any]?, completion: @escaping (Result<T, Error>) -> () ) {
         method.request(router: router, params: params) { (result) in
             switch result {
             case .failure(let error):
@@ -34,8 +34,8 @@ enum ProvideyMethod: String {
 }
 
 extension ProvideyMethod {
-    func request(router: ProvideyRouter, params: [String: Any]?, completion: @escaping (Result<Data, Error>)-> ()) {
-        guard let url = URL(string: router.rawValue) else {return}
+    func request(router: ProvideyEndpoint, params: [String: Any]?, completion: @escaping (Result<Data, Error>)-> ()) {
+        guard let url = URL(string: router.endpoint) else {return}
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = rawValue
         
@@ -56,6 +56,17 @@ extension ProvideyMethod {
     }
 }
 
-enum ProvideyRouter: String {
+enum ProvideyRouter: String, ProvideyEndpoint {
+    
     case home = "www.google.com/home" // Something to test
+    var endpoint: String{
+        switch self {
+        case .home:
+            return rawValue
+        }
+    }
+}
+
+protocol ProvideyEndpoint{
+    var endpoint: String{get}
 }
