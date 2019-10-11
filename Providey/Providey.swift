@@ -40,11 +40,13 @@ extension ProvideyMethod {
         urlRequest.httpMethod = rawValue
         
         do {
-            let data = try JSONSerialization.data(withJSONObject: params ?? "", options: .init())
-            
-        urlRequest.httpBody = data
-        urlRequest.setValue("application/json", forHTTPHeaderField: "content-type")
-            
+		
+			if let dicParams = params {
+				let data = try JSONSerialization.data(withJSONObject: dicParams, options: .init())
+				urlRequest.httpBody = data
+				urlRequest.setValue("application/json", forHTTPHeaderField: "content-type")
+			}
+		    
            URLSession.shared.dataTask(with: urlRequest) { (data, _, err) in
                 if let error = err { completion(.failure(error))}
                 guard let data = data else {return print("Does not load data")}
