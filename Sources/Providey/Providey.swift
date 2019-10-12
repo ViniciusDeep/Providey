@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Providey<T: Decodable> {
+public struct Providey<T: Decodable> {
     func request(router: ProvideyEndpoint, withMethod method: ProvideyMethod, params: [String : Any]?, completion: @escaping (Result<T, Error>) -> () ) {
         method.request(router: router, params: params) { (result) in
             switch result {
@@ -34,7 +34,7 @@ enum ProvideyMethod: String {
 }
 
 extension ProvideyMethod {
-    func request(router: ProvideyEndpoint, params: [String: Any]?, completion: @escaping (Result<Data, Error>)-> ()) {
+    public func request(router: ProvideyEndpoint, params: [String: Any]?, completion: @escaping (Result<Data, Error>)-> ()) {
         guard let url = URL(string: router.endpoint) else {return}
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = rawValue
