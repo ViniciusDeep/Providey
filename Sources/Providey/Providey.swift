@@ -26,7 +26,7 @@ public struct Providey<T: Decodable> {
     }
 }
 
-enum ProvideyMethod: String {
+public enum ProvideyMethod: String {
     case get = "GET"
     case post = "POST"
     case put = "PUT"
@@ -58,7 +58,7 @@ extension ProvideyMethod {
     }
 }
 
-enum ProvideyRouter: String, ProvideyEndpoint {
+public enum ProvideyRouter: String, ProvideyEndpoint {
     
     case home = "www.google.com/home" // Something to test
     var endpoint: String{
@@ -69,6 +69,6 @@ enum ProvideyRouter: String, ProvideyEndpoint {
     }
 }
 
-protocol ProvideyEndpoint{
+public protocol ProvideyEndpoint{
     var endpoint: String{get}
 }
