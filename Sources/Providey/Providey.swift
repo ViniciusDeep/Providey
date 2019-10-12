@@ -61,7 +61,7 @@ extension ProvideyMethod {
 public enum ProvideyRouter: String, ProvideyEndpoint {
     
     case home = "www.google.com/home" // Something to test
-    var endpoint: String{
+    public var endpoint: String{
         switch self {
         case .home:
             return rawValue
